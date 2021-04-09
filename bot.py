@@ -247,5 +247,4 @@ except KeyboardInterrupt:
     api.update_profile(description = "Sorry, I am OFFLINE right now.")
 except Exception as e:
     api.update_profile(description="Sorry, I am OFFLINE right now.")
-    # api.send_direct_message(963133317037154304, "BOT FAILURE: " + str(e))
     print("BOT FAILURE: " + str(e))
