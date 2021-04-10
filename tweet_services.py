@@ -1,9 +1,5 @@
 import tweepy, time
 
-# keys = ["5Y8eDa6QaLShEYbLSNc7SqthG",
-#         "3QOvrov6EUonoqLK8wjq2McLQBg6OLR234qBgahFwIqMCMuouH",
-#         "1378519265423323144-HmGdWZj9snPi0B9TnABmjbtZlvy6GT",
-#         "U5r5h23yKHyTRSug3TIjUJ9GluIS4I6mfCzlDaKUxAzoc"]
 keys = []
 with open("reference_files/keys.txt") as f:
     for line in f:
@@ -54,7 +50,7 @@ def processTweet(tweet):
             'player': None,
             'id': None,
             'flag': None}
-    text = tweet.full_text
+    text = tweet.full_text.lower()
     parts = text.split()
 
     # if the tweet has more than 3 words then do not process
@@ -89,9 +85,9 @@ def replyMessage(msg, tweetID, player):
     try:
         time.sleep(3)
         msg = player + " " + msg
+        return api.update_status(msg, tweetID)
     except tweepy.error.TweepError as e:
         print(e)
-    return api.update_status(msg, tweetID)
 
 def replyBoardMessage(board, tweetID, player, message=None):
     try:
@@ -100,6 +96,6 @@ def replyBoardMessage(board, tweetID, player, message=None):
             boardMsg = player + "\n" + str(board) + "\n\n" + message
         else:
             boardMsg = player + "\n" + str(board)
+        return api.update_status(boardMsg, tweetID)
     except tweepy.error.TweepError as e:
         print(e)
-    return api.update_status(boardMsg, tweetID)
