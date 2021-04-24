@@ -10,69 +10,6 @@ from tweet_services import *
 
 cache = "cache/"
 
-def save_progress(b, user):
-    """
-    Saves progress of Board into text file named after the user
-    :param b: The board
-    :param user: The player of the current board
-    :return:
-    """
-    fileWrite = open(cache + user + ".txt", "w+")
-    for position in b.board:
-        if b.board[position] is not None:
-            fileWrite.write(str(position) + " " + str(b.board[position]) + "\n")
-        else:
-            fileWrite.write(str(position) + " " + "0" + "\n")
-    fileWrite.write(str(b.available) + "\n")
-    fileWrite.write(str(b.lastPlayed) + "\n")
-    fileWrite.write(b.gameDifficulty)
-    fileWrite.close()
-
-
-def load_progress(user):
-    """
-    Reads file named after user to create Board object
-    :param user: the user who owns the board
-    :return: the loaded Board object
-    """
-    b = Board()
-    loadAvailable = []
-    loadBoard = {}
-    fileRead = open(cache + user + ".txt", 'r')
-    lines = tuple(fileRead)
-    for i in range(0, 9):
-        line = lines[i]
-        dictKey = int(line[0])
-        dictVal = line[2]
-        if dictVal == 0:
-            loadBoard[dictKey] = dictKey
-        else:
-            loadBoard[dictKey] = dictVal
-    for i in lines[9]:
-        try:
-            loadAvailable.append(int(i))
-        except ValueError:
-            pass
-    try:
-        loadLastPlayed = int(lines[10])
-    except ValueError:
-        loadLastPlayed = None
-    loadDifficulty = lines[11]
-    b.gameDifficulty = loadDifficulty
-    b.available = loadAvailable
-    b.lastPlayed = loadLastPlayed
-    b.board = loadBoard
-    fileRead.close()
-    return b
-
-
-def retweet_winner(tweetID):
-    try:
-        api.retweet(tweetID)
-    except tweepy.error.TweepError:
-        pass
-
-
 def log_user(dataset):
     current = datetime.now().strftime("%m/%d/%y, %H:%M:%S")
     currPlayer = dataset['player']
@@ -162,7 +99,8 @@ def bot():
                 else:
                     if not flagValid:  # if the given command flag isn't valid
                         reply_message(INCORRECT_INPUT, dataset['id'], dataset['player'])
-                    elif userBoard.has_been_played(dataset['flag']):  # if the given command flag has already been played
+                    elif userBoard.has_been_played(dataset['flag']):  # if the given command flag has already been
+                        # played
                         reply_message(BEEN_PLAYED, dataset['id'], dataset['player'])
             except FileNotFoundError:  # if the user tries to play a move on a game that hasn't started
                 reply_message(COMMAND_BEFORE_START, dataset['id'], dataset['player'])
@@ -175,9 +113,15 @@ def bot():
         update_last_seen(dataset['id'])
         time.sleep(15)
 
-try:
-    bot()
-except KeyboardInterrupt:
-    pass
-except Exception as e:
-    print("BOT FAILURE: " + str(e))
+def main(event, context):
+    try:
+        bot()
+        return {
+            'statusCode' : 200
+        }
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print("BOT FAILURE: " + str(e))
+
+bot()

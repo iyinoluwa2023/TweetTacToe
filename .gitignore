@@ -1,3 +1,5 @@
 # Project exclude paths
 /venv/
 .env
+@*.txt
+/cache/last-seen.txt

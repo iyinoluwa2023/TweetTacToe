@@ -1,7 +1,9 @@
 import os
+import shutil
 import time
 import tweepy
 from dotenv import load_dotenv
+from board import Board
 
 load_dotenv()
 
@@ -9,7 +11,10 @@ auth = tweepy.OAuthHandler(os.environ['API_Key'], os.environ['API_Key_Secret'])
 auth.set_access_token(os.environ['access_Key'], os.environ['access_Key_Secret'])
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
-LAST_SEEN = "cache/last-seen.txt"
+TMP = 'tmp/'
+CACHE = os.getcwd() + "/cache/"
+LAST_SEEN = CACHE + "last-seen.txt"
+
 COMMANDS = ["start", "play", "quit", "help"]
 
 def update_last_seen(lastSeenId):
@@ -91,3 +96,63 @@ def reply_board_message(board, tweetID, player, message=None):
         return api.update_status(boardMsg, tweetID)
     except tweepy.error.TweepError as e:
         print(e)
+
+def save_progress(b, user):
+    """
+    Saves progress of Board into text file named after the user
+    :param b: The board
+    :param user: The player of the current board
+    :return:
+    """
+    fileWrite = open(CACHE + user + ".txt", "w+")
+    for position in b.board:
+        if b.board[position] is not None:
+            fileWrite.write(str(position) + " " + str(b.board[position]) + "\n")
+        else:
+            fileWrite.write(str(position) + " " + "0" + "\n")
+    fileWrite.write(str(b.available) + "\n")
+    fileWrite.write(str(b.lastPlayed) + "\n")
+    fileWrite.write(b.gameDifficulty)
+    fileWrite.close()
+
+def load_progress(user):
+    """
+    Reads file named after user to create Board object
+    :param user: the user who owns the board
+    :return: the loaded Board object
+    """
+    b = Board()
+    loadAvailable = []
+    loadBoard = {}
+    fileRead = open(CACHE + user + ".txt", 'r')
+    lines = tuple(fileRead)
+    for i in range(0, 9):
+        line = lines[i]
+        dictKey = int(line[0])
+        dictVal = line[2]
+        if dictVal == 0:
+            loadBoard[dictKey] = dictKey
+        else:
+            loadBoard[dictKey] = dictVal
+    for i in lines[9]:
+        try:
+            loadAvailable.append(int(i))
+        except ValueError:
+            pass
+    try:
+        loadLastPlayed = int(lines[10])
+    except ValueError:
+        loadLastPlayed = None
+    loadDifficulty = lines[11]
+    b.gameDifficulty = loadDifficulty
+    b.available = loadAvailable
+    b.lastPlayed = loadLastPlayed
+    b.board = loadBoard
+    fileRead.close()
+    return b
+
+def retweet_winner(tweetID):
+    try:
+        api.retweet(tweetID)
+    except tweepy.error.TweepError:
+        pass
