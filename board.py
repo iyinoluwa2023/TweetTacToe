@@ -32,35 +32,35 @@ class Board:
                 s += "|\n+----+----+----+\n"
         return s
 
-    def hasBeenPlayed(self, position):
+    def has_been_played(self, position):
         beenPlayed = self.board[position] != Board.BLANK
         return True if beenPlayed else False
 
-    def playMove(self, position: int, player: str) -> bool:
+    def play_move(self, position: int, player: str) -> bool:
         """
         Plays move on the board
         :param position: position of move to be played
         :param player: symbol to be placed at move position
         :return: True if move was successful, False if unsucessful
         """
-        if self.hasBeenPlayed(position):
+        if self.has_been_played(position):
             return False
         try:
             if 1 <= position <= 9:
                 if player == 'O':
                     self.board[position] = Board.O
-                    self.__updateAvailable()
+                    self.__update_available()
                     self.lastPlayed = position
                 elif player == 'X':
                     self.board[position] = Board.X
-                    self.__updateAvailable()
+                    self.__update_available()
                     self.lastPlayed = position
                 return True
         except KeyError:
             return False
         return False
 
-    def __updateAvailable(self):
+    def __update_available(self):
         """
         Updates the list of available spaces left on the board
         """
@@ -70,7 +70,7 @@ class Board:
                 self.available.append(i)
 
     @staticmethod
-    def __diagonalPositions(position):
+    def __diagonal_positions(position):
         """
         Determines all possible diagonal positions of a given position
         :param position: any given position on the board
@@ -97,7 +97,7 @@ class Board:
         return diagonals
 
     @staticmethod
-    def __horizontalPositions(position):
+    def __horizontal_positions(position):
         """
         Returns list of a positions to check from a given position
         :param position: Any given position on the board
@@ -111,7 +111,7 @@ class Board:
             return [7, 8, 9]
 
     @staticmethod
-    def __verticalPositions(position):
+    def __vertical_positions(position):
         """
         Returns list of a positions to check from a given position
         :param position: Any given position on the board
@@ -124,12 +124,12 @@ class Board:
         if position == 3 or position == 6 or position == 9:
             return [3, 6, 9]
 
-    def __checkDiagonalWin(self):
+    def __check_diagonal_win(self):
         """
         Checks if the last played position creates a diagonal win
         :return: True if a diagonal win is achieved, False if not
         """
-        diagonals = self.__diagonalPositions(self.lastPlayed)
+        diagonals = self.__diagonal_positions(self.lastPlayed)
         checkSymbol = self.board[self.lastPlayed]
         if self.lastPlayed == 5:
             if self.board[diagonals['topRight']] == checkSymbol and self.board[diagonals['bottomLeft']] == checkSymbol:
@@ -139,45 +139,45 @@ class Board:
         for direction in diagonals:
             if diagonals[direction] and self.board[diagonals[direction]] == checkSymbol:
                 try:
-                    finalPosition = self.__diagonalPositions(diagonals[direction])[direction]
+                    finalPosition = self.__diagonal_positions(diagonals[direction])[direction]
                     if self.board[finalPosition] == checkSymbol:
                         return True
                 except KeyError:
                     pass
         return False
 
-    def __checkHorizontalWin(self):
+    def __check_horizontal_win(self):
         """
         Checks if the last played position creates a horizontal win
         :return: True if a horizontal win is achieved, False if not
         """
-        horizontals = self.__horizontalPositions(self.lastPlayed)
+        horizontals = self.__horizontal_positions(self.lastPlayed)
         checkSymbol = self.board[self.lastPlayed]
         for i in horizontals:
             if self.board[i] != checkSymbol:
                 return False
         return True
 
-    def __checkVerticalWin(self):
+    def __check_vertical_win(self):
         """
         Checks if the last played position creates a vertical win
         :return: True if a vertical win is achieved, False if not
         """
-        verticals = self.__verticalPositions(self.lastPlayed)
+        verticals = self.__vertical_positions(self.lastPlayed)
         checkSymbol = self.board[self.lastPlayed]
         for i in verticals:
             if self.board[i] != checkSymbol:
                 return False
         return True
 
-    def isWon(self):
+    def is_won(self):
         """
         Checks if last played position creates a win in all directions
         :return: True if a win is achieved, False if not
         """
-        return True if (self.__checkHorizontalWin() or self.__checkVerticalWin() or self.__checkDiagonalWin()) else False
+        return True if (self.__check_horizontal_win() or self.__check_vertical_win() or self.__check_diagonal_win()) else False
 
-    def isDraw(self):
+    def is_draw(self):
         for i in self.board:
             if self.board[i] == Board.BLANK:
                 return False

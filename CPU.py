@@ -5,7 +5,7 @@ import random
 class CPU:
 
     @staticmethod
-    def winFromNextMove(b, playerSymbol):
+    def win_from_next_move(b, playerSymbol):
         """
         Determines if the Player can win the game in their next move, and blocks that move if possible
         :param b: the game board
@@ -23,14 +23,14 @@ class CPU:
             bCopy = Board()
             bCopy.lastPlayed = b.lastPlayed
             bCopy.board = copy.deepcopy(b.board)
-            bCopy.playMove(i, otherSymbol)
-            if bCopy.isWon():
-                b.playMove(i, playerSymbol)
+            bCopy.play_move(i, otherSymbol)
+            if bCopy.is_won():
+                b.play_move(i, playerSymbol)
                 return True
         return False
 
     @staticmethod
-    def opponentWinFromNextMove(b, playerSymbol):
+    def opponent_win_from_next_move(b, playerSymbol):
         """
         Determines if the CPU can win the game in their next move, and plays that move if possible
         :param b: the game board
@@ -41,64 +41,64 @@ class CPU:
             bCopy = Board()
             bCopy.lastPlayed = b.lastPlayed
             bCopy.board = copy.deepcopy(b.board)
-            bCopy.playMove(i, playerSymbol)
-            if bCopy.isWon():
-                b.playMove(i, playerSymbol)
+            bCopy.play_move(i, playerSymbol)
+            if bCopy.is_won():
+                b.play_move(i, playerSymbol)
                 return True
         return False
 
     @staticmethod
-    def takeCorner(b, playerSymbol):
+    def take_corner(b, playerSymbol):
         random.shuffle(b.available)
         for i in b.available:
             if i in [1, 3, 7, 9]:
-                b.playMove(i, playerSymbol)
+                b.play_move(i, playerSymbol)
                 return True
         return False
 
     @staticmethod
-    def takeCenter(b, playerSymbol):
+    def take_center(b, playerSymbol):
         random.shuffle(b.available)
         if 5 in b.available:
-            b.playMove(5, playerSymbol)
+            b.play_move(5, playerSymbol)
             return True
         return False
 
     @staticmethod
-    def takeSide(b, playerSymbol):
+    def take_side(b, playerSymbol):
         random.shuffle(b.available)
         for i in b.available:
             if i in [2, 4, 6, 8]:
-                b.playMove(i, playerSymbol)
+                b.play_move(i, playerSymbol)
                 return True
         return False
 
     @staticmethod
-    def playMove(b, playerSymbol):
+    def play_move(b, playerSymbol):
         if b.gameDifficulty == 'easy':
-            if CPU.takeCorner(b, playerSymbol):
+            if CPU.take_corner(b, playerSymbol):
                 return True
-            if CPU.takeCenter(b, playerSymbol):
+            if CPU.take_center(b, playerSymbol):
                 return True
-            if CPU.takeSide(b, playerSymbol):
+            if CPU.take_side(b, playerSymbol):
                 return True
         if b.gameDifficulty == 'medium':
-            if CPU.opponentWinFromNextMove(b, playerSymbol):
+            if CPU.opponent_win_from_next_move(b, playerSymbol):
                 return True
-            if CPU.takeCorner(b, playerSymbol):
+            if CPU.take_corner(b, playerSymbol):
                 return True
-            if CPU.takeCenter(b, playerSymbol):
+            if CPU.take_center(b, playerSymbol):
                 return True
-            if CPU.takeSide(b, playerSymbol):
+            if CPU.take_side(b, playerSymbol):
                 return True
         if b.gameDifficulty == 'hard':
-            if CPU.winFromNextMove(b, playerSymbol):
+            if CPU.win_from_next_move(b, playerSymbol):
                 return True
-            if CPU.opponentWinFromNextMove(b, playerSymbol):
+            if CPU.opponent_win_from_next_move(b, playerSymbol):
                 return True
-            if CPU.takeCorner(b, playerSymbol):
+            if CPU.take_corner(b, playerSymbol):
                 return True
-            if CPU.takeCenter(b, playerSymbol):
+            if CPU.take_center(b, playerSymbol):
                 return True
-            if CPU.takeSide(b, playerSymbol):
+            if CPU.take_side(b, playerSymbol):
                 return True

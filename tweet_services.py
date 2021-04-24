@@ -1,35 +1,29 @@
 import os
-
-import tweepy, time
+import time
+import tweepy
 from dotenv import load_dotenv
 
 load_dotenv()
-
-keys = []
-cache = "tmp/"
 
 auth = tweepy.OAuthHandler(os.environ['API_Key'], os.environ['API_Key_Secret'])
 auth.set_access_token(os.environ['access_Key'], os.environ['access_Key_Secret'])
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
-LAST_SEEN = cache + "last-seen.txt"
+LAST_SEEN = "cache/last-seen.txt"
 COMMANDS = ["start", "play", "quit", "help"]
 
-def readLastSeen(FILE_NAME):
-    fileRead = open(FILE_NAME, 'r')
-    lastSeenId = int(fileRead.read().strip())
-    fileRead.close()
-    return lastSeenId
-
-def updateLastSeen(FILE_NAME, lastSeenId):
-    fileWrite = open(FILE_NAME, 'w')
+def update_last_seen(lastSeenId):
+    fileWrite = open(LAST_SEEN, 'w')
     fileWrite.write(str(lastSeenId))
     fileWrite.close()
 
-def getNewMentions():
-    return api.mentions_timeline(readLastSeen(LAST_SEEN), tweet_mode='extended')
+def get_new_mentions():
+    fileRead = open(LAST_SEEN, 'r')
+    lastSeenId = int(fileRead.read().strip())
+    fileRead.close()
+    return api.mentions_timeline(lastSeenId, tweet_mode='extended')
 
-def batchDelete(api):
+def batch_delete(api):
     for status in tweepy.Cursor(api.user_timeline).items():
         try:
             api.destroy_status(status.id)
@@ -39,7 +33,7 @@ def batchDelete(api):
             traceback.print_exc()
             print("Failed to delete:", status.id)
 
-def processTweet(tweet):
+def process_tweet(tweet):
     """
     Takes tweets mentioning the bot and passes all relevant data into a dictionary
     :param tweet: a Tweet object
@@ -67,7 +61,7 @@ def processTweet(tweet):
         return data
     return False
 
-def processTweetBatch(batch):
+def process_tweet_batch(batch):
     """
     Processes all tweets in batch
     :param batch: group of Tweet objects
@@ -75,11 +69,11 @@ def processTweetBatch(batch):
     """
     allData = []
     for tweet in batch:
-        if processTweet(tweet):
-            allData.append(processTweet(tweet))
+        if process_tweet(tweet):
+            allData.append(process_tweet(tweet))
     return allData
 
-def replyMessage(msg, tweetID, player):
+def reply_message(msg, tweetID, player):
     try:
         time.sleep(3)
         msg = player + " " + msg
@@ -87,7 +81,7 @@ def replyMessage(msg, tweetID, player):
     except tweepy.error.TweepError as e:
         print(e)
 
-def replyBoardMessage(board, tweetID, player, message=None):
+def reply_board_message(board, tweetID, player, message=None):
     try:
         time.sleep(3)
         if message:
