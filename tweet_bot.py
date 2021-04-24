@@ -1,9 +1,5 @@
-import os
 import random
-import time
 from datetime import datetime
-
-from board import Board
 from CPU import CPU
 from string_constants import *
 from tweet_services import *
@@ -113,15 +109,16 @@ def bot():
         update_last_seen(dataset['id'])
         time.sleep(15)
 
-def main(event, context):
-    try:
-        bot()
-        return {
-            'statusCode' : 200
-        }
-    except KeyboardInterrupt:
-        pass
-    except Exception as e:
-        print("BOT FAILURE: " + str(e))
+def main():
+    while True:
+        try:
+            bot()
+            return {
+                'statusCode' : 200
+            }
+        except KeyboardInterrupt:
+            pass
+        except Exception as e:
+            print("BOT FAILURE: " + str(e))
 
-bot()
+main()

@@ -2,4 +2,4 @@
 /venv/
 .env
 @*.txt
-/cache/last-seen.txt
+last-seen.txt
