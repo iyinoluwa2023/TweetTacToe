@@ -175,7 +175,6 @@ def bot():
         update_last_seen(dataset['id'])
         time.sleep(15)
 
-# while True:
 try:
     bot()
 except KeyboardInterrupt:
