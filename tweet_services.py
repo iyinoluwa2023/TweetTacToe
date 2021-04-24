@@ -1,20 +1,19 @@
+import os
+
 import tweepy, time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 keys = []
-with open("reference_files/keys.txt") as f:
-    for line in f:
-        keys.append(line)
+cache = "tmp/"
 
-auth = tweepy.OAuthHandler(keys[0], keys[1])
-auth.set_access_token(keys[2], keys[3])
+auth = tweepy.OAuthHandler(os.environ['API_Key'], os.environ['API_Key_Secret'])
+auth.set_access_token(os.environ['access_Key'], os.environ['access_Key_Secret'])
 api = tweepy.API(auth, wait_on_rate_limit=True)
 
-LAST_SEEN = "reference_files/last-seen.txt"
-
-COMMANDS = ["start",
-            "play",
-            "quit",
-            "help"]
+LAST_SEEN = cache + "last-seen.txt"
+COMMANDS = ["start", "play", "quit", "help"]
 
 def readLastSeen(FILE_NAME):
     fileRead = open(FILE_NAME, 'r')
@@ -67,7 +66,6 @@ def processTweet(tweet):
         # updateLastSeen(LAST_SEEN, data['id'])
         return data
     return False
-
 
 def processTweetBatch(batch):
     """
