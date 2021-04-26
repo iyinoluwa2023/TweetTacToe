@@ -113,9 +113,6 @@ def main():
     while True:
         try:
             bot()
-            return {
-                'statusCode' : 200
-            }
         except KeyboardInterrupt:
             pass
         except Exception as e:
