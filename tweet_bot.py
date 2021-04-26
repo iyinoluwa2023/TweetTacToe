@@ -1,5 +1,12 @@
 import random
+import sys
+import time
 from datetime import datetime
+import logging
+
+import tweepy
+from urllib3.connectionpool import xrange
+
 from CPU import CPU
 from string_constants import *
 from tweet_services import *
@@ -107,15 +114,13 @@ def bot():
             except OSError:
                 reply_message(COMMAND_BEFORE_START, command['id'], command['player'])
         update_last_seen(command['id'])
-        time.sleep(15)
+        time.sleep(240)
 
 def main():
     while True:
         try:
             bot()
-        except KeyboardInterrupt:
-            pass
         except Exception as e:
-            print("BOT FAILURE: " + str(e))
+            logging.exception("BOT FAILURE")
 
 main()
