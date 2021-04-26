@@ -1,11 +1,6 @@
 import random
-import sys
-import time
 from datetime import datetime
 import logging
-
-import tweepy
-from urllib3.connectionpool import xrange
 
 from CPU import CPU
 from string_constants import *
@@ -28,6 +23,7 @@ def bot():
     """
     batch = get_new_mentions()  # pulls and processes new Tweets
     commandsInBatch = process_tweet_batch(batch)[::-1]
+    lastSeen = None
     for command in commandsInBatch:  # for each command in the batch
         log_user(command)
         if command['cmd'] == "start":
@@ -113,8 +109,9 @@ def bot():
                 reply_message(COME_AGAIN, command['id'], command['player'])
             except OSError:
                 reply_message(COMMAND_BEFORE_START, command['id'], command['player'])
-        update_last_seen(command['id'])
-        time.sleep(240)
+        lastSeen = command['id']
+    update_last_seen(lastSeen)
+    time.sleep(600)
 
 def main():
     while True:
