@@ -21,9 +21,9 @@ def bot():
     """
     Loop runs to retrieve and process all new mentions
     """
+    global lastSeen
     batch = get_new_mentions()  # pulls and processes new Tweets
     commandsInBatch = process_tweet_batch(batch)[::-1]
-    lastSeen = None
     for command in commandsInBatch:  # for each command in the batch
         log_user(command)
         if command['cmd'] == "start":
