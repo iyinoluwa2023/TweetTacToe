@@ -16,16 +16,19 @@ LAST_SEEN = CACHE + "last-seen.txt"
 
 COMMANDS = ["start", "play", "quit", "help"]
 
+def get_last_seen():
+    fileRead = open(LAST_SEEN, 'r')
+    lastSeenId = int(fileRead.read().strip())
+    fileRead.close()
+    return lastSeenId
+
 def update_last_seen(lastSeenId):
     fileWrite = open(LAST_SEEN, 'w')
     fileWrite.write(str(lastSeenId))
     fileWrite.close()
 
 def get_new_mentions():
-    fileRead = open(LAST_SEEN, 'r')
-    lastSeenId = int(fileRead.read().strip())
-    fileRead.close()
-    return api.mentions_timeline(lastSeenId, tweet_mode='extended')
+    return api.mentions_timeline(get_last_seen(), tweet_mode='extended')
 
 def batch_delete(api):
     for status in tweepy.Cursor(api.user_timeline).items():
